@@ -19,6 +19,7 @@ services:
       - BACKEND_URL=${BACKEND_URL:-http://localhost}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
       - PROXY_PORT=${PROXY_PORT:-8080}
+      - WHATSAPP_PROVIDER=${WHATSAPP_PROVIDER:-whaileys}
       - CHROME_ARGS=--no-sandbox --disable-setuid-sandbox
     ports:
       - ${BACKEND_PORT:-8080}:3000

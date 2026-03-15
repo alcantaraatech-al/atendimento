@@ -364,12 +364,13 @@ const MessagesList = ({ ticketId, isGroup }) => {
     socket.on("connect", () => socket.emit("joinChatBox", ticketId));
 
     socket.on("appMessage", (data) => {
-      if (data.action === "create") {
+      if (data.action === "create" && data.message) {
+        if (!data.message.createdAt) data.message.createdAt = new Date().toISOString();
         dispatch({ type: "ADD_MESSAGE", payload: data.message });
         scrollToBottom();
       }
 
-      if (data.action === "update") {
+      if (data.action === "update" && data.message) {
         dispatch({ type: "UPDATE_MESSAGE", payload: data.message });
       }
     });
@@ -520,7 +521,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
           key={`timestamp-${message.id}`}
         >
           <div className={classes.dailyTimestampText}>
-            {format(parseISO(messagesList[index].createdAt), "dd/MM/yyyy")}
+            {format(parseISO(messagesList[index]?.createdAt || new Date().toISOString()), "dd/MM/yyyy")}
           </div>
         </span>
       );
@@ -536,21 +537,13 @@ const MessagesList = ({ ticketId, isGroup }) => {
             key={`timestamp-${message.id}`}
           >
             <div className={classes.dailyTimestampText}>
-              {format(parseISO(messagesList[index].createdAt), "dd/MM/yyyy")}
+              {format(parseISO(messagesList[index]?.createdAt || new Date().toISOString()), "dd/MM/yyyy")}
             </div>
           </span>
         );
       }
     }
-    if (index === messagesList.length - 1) {
-      return (
-        <div
-          key={`ref-${message.createdAt}`}
-          ref={lastMessageRef}
-          style={{ float: "left", clear: "both" }}
-        />
-      );
-    }
+    return null;
   };
 
   const renderMessageDivider = (message, index) => {
@@ -621,7 +614,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
                   {message.quotedMsg && renderQuotedMessage(message)}
                   <MarkdownWrapper>{message.body}</MarkdownWrapper>
                   <span className={classes.timestamp}>
-                    {format(parseISO(message.createdAt), "HH:mm")}
+                    {format(parseISO(message?.createdAt || new Date().toISOString()), "HH:mm")}
                   </span>
                 </div>
               </div>
@@ -661,7 +654,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
                   {message.quotedMsg && renderQuotedMessage(message)}
                   <MarkdownWrapper>{message.body}</MarkdownWrapper>
                   <span className={classes.timestamp}>
-                    {format(parseISO(message.createdAt), "HH:mm")}
+                    {format(parseISO(message?.createdAt || new Date().toISOString()), "HH:mm")}
                     {renderMessageAck(message)}
                   </span>
                 </div>
@@ -670,7 +663,12 @@ const MessagesList = ({ ticketId, isGroup }) => {
           );
         }
       });
-      return viewMessagesList;
+      return (
+        <>
+          {viewMessagesList}
+          <div ref={lastMessageRef} style={{ float: "left", clear: "both" }} />
+        </>
+      );
     } else {
       return <div>Say hello to your new contact!</div>;
     }

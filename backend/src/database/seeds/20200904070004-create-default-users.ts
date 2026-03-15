@@ -1,7 +1,8 @@
 import { QueryInterface } from "sequelize";
 
 module.exports = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    await queryInterface.bulkDelete("Users", { email: "admin@whaticket.com" });
     return queryInterface.bulkInsert(
       "Users",
       [

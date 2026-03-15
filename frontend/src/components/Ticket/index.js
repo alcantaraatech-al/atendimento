@@ -109,8 +109,8 @@ const Ticket = () => {
     socket.on("connect", () => socket.emit("joinChatBox", ticketId));
 
     socket.on("ticket", (data) => {
-      if (data.action === "update") {
-        setTicket(data.ticket);
+      if (data.action === "update" && data.ticket) {
+        setTicket((prev) => ({ ...prev, ...data.ticket }));
       }
 
       if (data.action === "delete") {

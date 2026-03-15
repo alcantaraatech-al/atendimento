@@ -2,7 +2,8 @@ import { QueryInterface } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 module.exports = {
-  up: (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface) => {
+    await queryInterface.bulkDelete("Settings", { key: "userApiToken" });
     return queryInterface.bulkInsert(
       "Settings",
       [
